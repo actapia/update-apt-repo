@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+#set -x
+# set -x
+cd ~/cs485-incoming
+
+DISTRIBUTION=focal
+
+if source optionsh.sh; then
+    declare -A MYARGS
+    parse_args $0 MYARGS "$@"
+    parse_result=$?
+    if [ $parse_result -ne 0 ]; then
+	if [ $parse_result -eq 101 ]; then
+            exit 0
+	else
+            exit $parse_result
+	fi
+    fi
+    if [ -n "${MYARGS[fix-distribution]}" ]; then
+	fix_flag=true
+    else
+	fix_flag=false
+    fi
+    if [ -n "${MYARGS[update-sources]}" ]; then
+	sources_flag=true
+    else
+	sources_flag=false
+    fi
+    daargs=()
+    ta=${MYARGS[debarchiver-args]}
+    res="$(eval 'for word in '$ta'; do echo $word; done')"
+    while read -r line; do
+	daargs+=("$line")
+    done <<< "$res"
+else
+    2>&1 echo "Could not source optionsh.sh."
+    exit 1
+fi
+
+for f in *.changes; do
+    if ! grep -q -e "Distribution: $DISTRIBUTION" "$f"; then
+	if distribution="$(grep -o 'Distribution: .*' "$f" | sed 's/Distribution: \(.*\)$/\1/')"; then
+	    2>&1 echo "Incorrect distribution $distribution in changes file $f."
+	    if [ "$fix_flag" = true ]; then
+		echo "Fixing distribution in changes file $f."
+		sed "$f" -i.bak -e 's/^Distribution:.*$/Distribution: '"$DISTRIBUTION"'/g'
+	    else
+		exit 1	
+	    fi
+	else
+	    2>&1 echo "Could not find distribution in changes file $f"
+	    exit 1
+	fi
+    fi
+done
+if [ ${#daargs[@]} -gt 0 ]; then
+    debarchiver --index "${daargs[@]}"
+else
+    debarchiver --index
+fi
+
+if [ "$sources_flag" = true ]; then
+    add-sources
+fi

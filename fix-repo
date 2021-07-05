@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -e
+set -x
+cd /u/zon-d2/ugrad/acta225/HTML/CS485/repo/dists
+apt-ftparchive -o APT::FTPArchive::AlwaysStat=true -c focal/.apt-ftparchive1.conf release focal > focal/Release
+rm focal/Release.gpg
+gpg -a -b -s -u andrew.tapia@uky.edu -o focal/Release.gpg focal/Release

@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+set -e
+set -x
+cd /u/zon-d2/ugrad/acta225/HTML/CS485/repo/dists/focal/main/binary-amd64
+#awk '($1 == "Package:"){print $0; temp = $1; $1 = "Source:"; print $0; $1 = temp; next} {print $0}' Packages | uniq > Packages.new
+python3 "$DIR/insert_source_lines.py" -p Packages -s ../source/Sources > Packages.new
+mv Packages.new Packages
+gzip < Packages > Packages.gz
+cd /u/zon-d2/ugrad/acta225/HTML/CS485/repo/dists
+apt-ftparchive -o APT::FTPArchive::AlwaysStat=true -c focal/.apt-ftparchive1.conf release focal > focal/Release
+rm focal/Release.gpg
+gpg -a -b -s -u andrew.tapia@uky.edu -o focal/Release.gpg focal/Release

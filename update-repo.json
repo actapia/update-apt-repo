@@ -1,0 +1,26 @@
+{
+    "options": [
+	{
+	    "long_name": "fix-distribution",
+	    "short_name": "f",
+	    "has_arg": "NO_ARGUMENT",
+	    "optional": true,
+	    "help": "Fix distributions that don't match default in change files."
+	},
+	{
+	    "long_name": "update-sources",
+	    "short_name": "s",
+	    "has_arg": "NO_ARGUMENT",
+	    "optional": true,
+	    "help": "Update Packages to direct to source packages from binary packages."
+	},
+	{
+	    "long_name": "debarchiver-args",
+	    "short_name": "d",
+	    "has_arg": "REQUIRED_ARGUMENT",
+	    "optional": true,
+	    "help": "Additional arguments to pass to debarchiver."
+	}
+    ],
+    "help": true
+}
