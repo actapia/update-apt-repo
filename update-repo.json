@@ -3,7 +3,7 @@
 	{
 	    "long_name": "fix-distribution",
 	    "short_name": "f",
-	    "has_arg": "NO_ARGUMENT",
+	    "has_arg": "OPTIONAL_ARGUMENT",
 	    "optional": true,
 	    "help": "Fix distributions that don't match default in change files."
 	},

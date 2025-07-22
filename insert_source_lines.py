@@ -53,17 +53,24 @@ class Stanza:
         if current_stanza:
             stanzas[current_stanza["Package"]] = current_stanza
         return stanzas
+
+    @classmethod
+    def read_stanzas_from_filename(cls, fn):
+        try:
+            with open(fn, "r") as f:
+                return cls.read_stanzas(f)
+        except FileNotFoundError:
+            return OrderedDict()
         
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-p","--packages")
     parser.add_argument("-s","--sources")
+    parser.add_argument("-x","--extra",help="Additional sources.")
     args = parser.parse_args()
-    with open(args.packages,"r") as package_file:
-        package_stanzas = Stanza.read_stanzas(package_file)
-    with open(args.sources,"r") as sources_file:
-        source_stanzas = Stanza.read_stanzas(sources_file)
+    package_stanzas = Stanza.read_stanzas_from_filename(args.packages)
+    source_stanzas = Stanza.read_stanzas_from_filename(args.sources)
     for source_stanza in source_stanzas.values():
         binaries = [b.strip() for b in source_stanza["Binary"].split(",")]
         for binary in binaries:

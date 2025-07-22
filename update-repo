@@ -3,7 +3,8 @@
 # set -x
 cd ~/cs485-incoming
 
-DISTRIBUTION=focal
+source /etc/os-release
+DISTRIBUTION="$UBUNTU_CODENAME"
 
 if source optionsh.sh; then
     declare -A MYARGS
@@ -18,6 +19,9 @@ if source optionsh.sh; then
     fi
     if [ -n "${MYARGS[fix-distribution]}" ]; then
 	fix_flag=true
+	if [ "${MYARGS[fix-distribution]}" != "true" ]; then
+	    DISTRIBUTION="${MYARGS[fix-distribution]}"
+	fi
     else
 	fix_flag=false
     fi
@@ -37,22 +41,28 @@ else
     exit 1
 fi
 
-for f in *.changes; do
-    if ! grep -q -e "Distribution: $DISTRIBUTION" "$f"; then
-	if distribution="$(grep -o 'Distribution: .*' "$f" | sed 's/Distribution: \(.*\)$/\1/')"; then
-	    2>&1 echo "Incorrect distribution $distribution in changes file $f."
-	    if [ "$fix_flag" = true ]; then
-		echo "Fixing distribution in changes file $f."
-		sed "$f" -i.bak -e 's/^Distribution:.*$/Distribution: '"$DISTRIBUTION"'/g'
+# echo "DISTRIBUTION: $DISTRIBUTION"
+# exit 1
+
+if compgen -G "*.changes" > /dev/null; then
+    for f in *.changes; do
+	if ! grep -q -e "Distribution: $DISTRIBUTION" "$f"; then
+	    if distribution="$(grep -o 'Distribution: .*' "$f" | sed 's/Distribution: \(.*\)$/\1/')"; then
+		2>&1 echo "Incorrect distribution $distribution in changes file $f."
+		if [ "$fix_flag" = true ]; then
+		    echo "Fixing distribution in changes file $f."
+		    sed "$f" -i.bak -e 's/^Distribution:.*$/Distribution: '"$DISTRIBUTION"'/g'
+		else
+		    exit 1	
+		fi
 	    else
-		exit 1	
+		2>&1 echo "Could not find distribution in changes file $f"
+		exit 1
 	    fi
-	else
-	    2>&1 echo "Could not find distribution in changes file $f"
-	    exit 1
 	fi
-    fi
-done
+    done
+fi
+
 if [ ${#daargs[@]} -gt 0 ]; then
     debarchiver --index "${daargs[@]}"
 else
@@ -60,5 +70,5 @@ else
 fi
 
 if [ "$sources_flag" = true ]; then
-    add-sources
+    add-sources "$DISTRIBUTION"
 fi
