@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 #set -x
 # set -x
-cd ~/cs485-incoming
 
 source /etc/os-release
 DISTRIBUTION="$UBUNTU_CODENAME"
+
+eval "$(print_debarchiver_config.pl)"
 
 if source optionsh.sh; then
     declare -A MYARGS

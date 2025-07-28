@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
+source "$(print_debarchiver_config.pl)"
 set -e
 set -x
-cd /u/zon-d2/ugrad/acta225/HTML/CS485/repo/dists
+#cd "$DESTDIR/.."
 apt-ftparchive -o APT::FTPArchive::AlwaysStat=true -c "$1/.apt-ftparchive1.conf" release "$1" > "$1"/Release
 rm "$1"/Release.gpg
 gpg -a -b -s -u andrew.tapia@uky.edu -o "$1"/Release.gpg "$1"/Release

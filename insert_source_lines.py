@@ -4,8 +4,6 @@ from collections import OrderedDict
 from InsertableOrderedDict import InsertableOrderedDict
 from IPython import embed
 
-repo_root = os.path.expanduser("~/HTML/CS485/repo")
-
 class Stanza:
     def __init__(self):
         self.fields = InsertableOrderedDict()
@@ -65,9 +63,8 @@ class Stanza:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-p","--packages")
-    parser.add_argument("-s","--sources")
-    parser.add_argument("-x","--extra",help="Additional sources.")
+    parser.add_argument("-p","--packages", required=True)
+    parser.add_argument("-s","--sources", required=True)
     args = parser.parse_args()
     package_stanzas = Stanza.read_stanzas_from_filename(args.packages)
     source_stanzas = Stanza.read_stanzas_from_filename(args.sources)

@@ -1,17 +1,19 @@
 #!/usr/bin/env bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+eval "$(print_debarchiver_config.pl)"
 set -e
 set -x
-readonly SECTIONS=("main" "non-free")
 for section in "${SECTIONS[@]}"; do
-    if cd "/u/zon-d2/ugrad/acta225/HTML/CS485/repo/dists/$1/$section/binary-amd64"; then
-	#awk '($1 == "Package:"){print $0; temp = $1; $1 = "Source:"; print $0; $1 = temp; next} {print $0}' Packages | uniq > Packages.new
-	python3 "$DIR/insert_source_lines.py" -p Packages -s ../source/Sources > Packages.new
-	mv Packages.new Packages
-	gzip < Packages > Packages.gz
-    fi
+    for architecture in "${ARCHITECTURES[@]}"; do
+	if cd "$DESTDIR/$1/$section/binary-$architecture"; then
+	    #awk '($1 == "Package:"){print $0; temp = $1; $1 = "Source:"; print $0; $1 = temp; next} {print $0}' Packages | uniq > Packages.new
+	    python3 "$DIR/insert_source_lines.py" -p Packages -s ../source/Sources > Packages.new
+	    mv Packages.new Packages
+	    gzip < Packages > Packages.gz
+	fi
+    done
 done
-cd /u/zon-d2/ugrad/acta225/HTML/CS485/repo/dists
+#cd "$DESTDIR"
 apt-ftparchive -o APT::FTPArchive::AlwaysStat=true -c "$1/.apt-ftparchive1.conf" release "$1" > "$1"/Release
 rm "$1/Release.gpg"
-gpg -a -b -s -u andrew.tapia@uky.edu -o "$1/Release.gpg" "$1/Release"
+gpg -a -b -s -u "$GPGKEY" -o "$1/Release.gpg" "$1/Release"
