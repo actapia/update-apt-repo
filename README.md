@@ -321,7 +321,7 @@ On Ubuntu 22.04,
 
 ```bash
 sudo apt update; 
-sudo apt install build-essential git subversion python3-pip cpanm
+sudo apt install build-essential git subversion python3-pip cpanminus
 ```
 
 ## Installation
@@ -377,7 +377,7 @@ cd ..
 Copy the built `opalmod` library to `~/perl5/lib/perl5/`
 
 ```bash
-cp debarchiver-build/usr/lib/perl5/* ~/perl5/lib/perl5/
+cp -r debarchiver-build/usr/share/perl5/* ~/perl5/lib/perl5/
 ```
 
 ### Python dependencies
@@ -475,7 +475,7 @@ anyway, it's convenient to also use that script to set the `PATH` and `PERL5LIB`
 environment variables appropriately.
 
 ```bash
-echo 'export PATH="$PATH:$HOME/.local/bin:$HOME/perl5/bin" \
+echo 'export PATH="$PATH:$HOME/.local/bin:$HOME/perl5/bin"' \
     >> apt_repo/bin/activate	
 echo 'export PERL5LIB="$HOME/perl5/lib/perl5"' >> apt_repo/bin/activate
 ```

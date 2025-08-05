@@ -13,7 +13,7 @@ for section in "${SECTIONS[@]}"; do
 	fi
     done
 done
-#cd "$DESTDIR"
+cd "$DESTDIR"
 apt-ftparchive -o APT::FTPArchive::AlwaysStat=true -c "$1/.apt-ftparchive1.conf" release "$1" > "$1"/Release
-rm "$1/Release.gpg"
+rm "$1/Release.gpg" || true
 gpg -a -b -s -u "$GPGKEY" -o "$1/Release.gpg" "$1/Release"

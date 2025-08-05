@@ -1,3 +1,4 @@
+#!/usr/bin/perl
 my $userconfigfile = "$ENV{HOME}/.debarchiver.conf";
 
 do $userconfigfile;
