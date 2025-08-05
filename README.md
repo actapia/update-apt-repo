@@ -643,6 +643,9 @@ $gpgkey = "andrew.tapia\@uky.edu";
 # Where apt-ftparchive should store the package cache.
 $cachedir = "/u/zon-d2/ugrad/acta225/cachedir";
 
+# Disable sending mail.
+$usermailcmd = "/bin/true";
+
 1;
 ```
 <!-- MARKDOWN-AUTO-DOCS:END -->
